@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Homepage from "./pages/Homepage";
+import TestingScreen from "./pages/TestingScreen";
 import reportWebVitals from "./reportWebVitals";
 
 import "./styles/index.css";
@@ -8,7 +8,7 @@ import "./styles/index.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Homepage />
+    <TestingScreen />
   </React.StrictMode>
 );
 

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import Lottie from "lottie-react";
+import axios from "axios";
 
 import CinemaLoading from "../assets/animations/cinema_animation.json";
 import Layout from "../components/Layout";
 import { Card, Card2 } from "../components/Card";
-import CustomHeader from "../components/Header";
 
 import "../styles/App.css";
 
@@ -14,10 +14,11 @@ class Homepage extends Component {
     title: "WELCOME",
     dataMovie: [],
     loading: true,
+    page: 1,
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchData2();
   }
 
   handleClick(item) {
@@ -26,55 +27,40 @@ class Homepage extends Component {
     this.setState({ dataMovie: temp, title: item.title });
   }
 
-  // simulasi pemanggilan api
   fetchData() {
-    setTimeout(() => {
-      const dummy = [
-        {
-          id: 1,
-          title: "Title 1",
-          content: "Content 1",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-        {
-          id: 2,
-          title: "Title 2",
-          content: "Content 2",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-        {
-          id: 3,
-          title: "Title 3",
-          content: "Content 3",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-        {
-          id: 4,
-          title: "Title 4",
-          content: "Content 4",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-        {
-          id: 5,
-          title: "Title 5",
-          content: "Content 5",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-        {
-          id: 6,
-          title: "Title 6",
-          content: "Content 6",
-          image:
-            "https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg",
-        },
-      ];
-      this.setState({ data: dummy }, () => this.setState({ loading: false }));
-    }, 3000);
+    axios
+      .get(
+        "https://api.themoviedb.org/3/movie/now_playing?api_key=0e6ab6977a441feefe861571f011429c&language=en-US&page=1"
+      )
+      .then((res) => {
+        const { results } = res.data;
+        this.setState({ data: results });
+      })
+      .catch((err) => alert(err.toString()))
+      .finally(() => this.setState({ loading: false }));
+  }
+
+  fetchData2() {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const newPage = this.state.page + 1;
+    fetch(
+      `https://api.themoviedb.org/3/movie/now_playing?api_key=0e6ab6977a441feefe861571f011429c&language=en-US&page=${this.state.page}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const { results } = data;
+        const temp = this.state.data.slice(); // copy the array/duplicate the array
+        temp.push(...results); // add the new data with push
+        this.setState({ data: temp, page: newPage });
+      })
+      .catch((err) => alert(err.toString()))
+      .finally(() => this.setState({ loading: false }));
   }
 
   render() {
@@ -88,23 +74,12 @@ class Homepage extends Component {
               <Card
                 key={item.id}
                 titleItem={item.title}
-                contentItem={item.content}
-                imgItem={item.image}
+                imgItem={item.poster_path}
                 onClickItem={() => this.handleClick(item)}
               />
             ))}
           </div>
-          <h1>DATA MOVIE</h1>
-          <div className="grid grid-flow-row auto-rows-max grid-cols-2 md:grid-cols-4 lg:grid-cols-5 m-2 gap-3">
-            {this.state.dataMovie.map((item, index) => (
-              <Card2
-                key={index}
-                titleItem={item.title}
-                contentItem={item.content}
-                onClickItem={() => this.handleClick(item)}
-              />
-            ))}
-          </div>
+          <button onClick={() => this.fetchData2()}>Load More</button>
         </Layout>
       );
     }
