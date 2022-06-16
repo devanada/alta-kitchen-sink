@@ -5,7 +5,7 @@ class Layout extends Component {
   render() {
     return (
       <div className="w-full h-screen flex flex-col overflow-auto">
-        <CustomHeader title={this.props.title} />
+        <CustomHeader onKeyDown={this.props.onKeyDown} />
         <div className="h-full w-full">{this.props.children}</div>
       </div>
     );
