@@ -23,7 +23,7 @@ class Card extends Component {
             {this.props.titleItem}
           </p>
         </div>
-        <Button label="Add To Favorite" />
+        <Button label="Add To Favorite" onClick={this.props.onClickFav} />
       </div>
     );
   }
